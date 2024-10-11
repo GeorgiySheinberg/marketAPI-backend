@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-amtz+jb!xmaxf^6k4b1+%ji()m1)nvlix=7z4u&_+aq%0_%0l('
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [env("ALLOWED_HOSTS")]
 
 
 # Application definition
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
     'djoser',
 
     'marketAPI.apps.MarketapiConfig',
+
 
 
 ]
@@ -142,3 +147,35 @@ REST_FRAMEWORK = {
     ),
 
 }
+
+EMAIL_BACKEND = env("EMAIL_BACKEND") # TODO
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_CONFIRMATION_EMAIL': True,
+    'USERNAME_FIELD': 'email',
+    'SERIALIZERS': {
+        'user_create': 'marketAPI.serializer.UserCreateSerializer',
+        'user': 'marketAPI.serializer.UserSerializer', },
+    'EMAIL':
+        {
+            'activation': 'djoser.email.ActivationEmail',
+            'confirmation': 'djoser.email.ConfirmationEmail',
+            'password_reset': 'djoser.email.PasswordResetEmail',
+            'password_changed_confirmation': 'djoser.email.PasswordChangedConfirmationEmail',
+            'username_changed_confirmation': 'djoser.email.UsernameChangedConfirmationEmail',
+            'username_reset': 'djoser.email.UsernameResetEmail',
+        },
+
+}
+
+
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
