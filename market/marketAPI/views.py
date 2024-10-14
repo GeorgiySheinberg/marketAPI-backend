@@ -115,7 +115,7 @@ class OrderProductModelViewSet(viewsets.ModelViewSet):
         # Создаем заказ
         order = Order.objects.create(user=request.user,
                                      status='active',
-                                     delivery_address=request.data.get("delivery_address"))
+                                     delivery_address=request.data.get("delivery_address", request.user.address))
 
         # Добавляем позиции в заказ
         total_price = 0
